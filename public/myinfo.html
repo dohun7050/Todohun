@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>todolist - 메인화면</title>
+    <title>todolist - 내 정보</title>
     <style>
         nav {
             display: flex;
@@ -10,7 +10,6 @@
             align-items: center;
             padding: 10px 20px;
             border-bottom: 1px solid black;
-
         }
 
         .menu {
@@ -114,8 +113,6 @@
             background-color: gray;
         }
     </style>
-
-
 </head>
 
 <body>
@@ -152,15 +149,17 @@
                     <div class="progressBar"></div>
                 </div>
                 <span id="progressPer"></span>
-
             </div>
-            <a href="/question.html">문의하기</a>
+            
+            <a href="#" id="questionLink">문의하기</a>
+            
             <a href="" onclick="withdraw()">탈퇴하기</a>
         </section>
-
     </main>
+    
     <script>
         loadtodo();
+        
         async function withdraw() {
             const data = prompt("탈퇴하시겠습니까? 탈퇴를 원하신다면 닉네임을 입력해주세요");
             if (!data) {
@@ -179,8 +178,8 @@
             }
             alert("withdraw success");
             location.href = "/login.html";
-
         }
+        
         async function loadInfo() {
             const res = await fetch("/user/myinfo");
             if (!res.ok) {
@@ -192,10 +191,15 @@
 
             document.getElementById("name").innerText = "닉네임: " + data.nickname;
             document.getElementById("email").innerText = "이메일: " + data.email;
-            document.getElementById("writing").innerText = "소개 글: " + data.writing || "";
+            document.getElementById("writing").innerText = "소개 글: " + (data.writing || "");
 
+            if (data.user_id) {
+                document.getElementById("questionLink").href = `http://localhost:8080/myproject/question.jsp?user_id=${data.user_id}`;
+            }
         }
+        
         loadInfo();
+        
         const todolist = document.getElementById("todoList");
         todolist.addEventListener("change", async function (e) {
             if (!e.target.classList.contains("item")) {
@@ -219,6 +223,7 @@
                 todolist.prepend(li);
             }
         })
+        
         async function loadtodo() {
             const res = await fetch("/todo/todolist", {
                 credentials: "include"
@@ -249,9 +254,6 @@
             document.querySelector(".progressBar").style.width = percent + "%";
             document.getElementById("progressPer").innerText = percent + "%";
         }
-
-
-
     </script>
 </body>
 
